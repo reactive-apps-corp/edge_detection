@@ -116,6 +116,11 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
         captureSession.addInput(deviceInput)
         captureSession.addOutput(photoOutput)
         captureSession.addOutput(videoOutput)
+        
+        if captureSession.canAddOutput(metadataOutput) {
+            captureSession.addOutput(metadataOutput)
+            metadataOutput.metadataObjectTypes = [] // Отключить все метаданные
+        }
 
         let photoPreset = AVCaptureSession.Preset.photo
 
