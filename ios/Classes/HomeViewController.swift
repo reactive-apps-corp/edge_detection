@@ -14,9 +14,9 @@ class HomeViewController: UIViewController, ImageScannerControllerDelegate {
         if self.isBeingPresented {
             cameraController = ImageScannerController()
             cameraController.imageScannerDelegate = self
-            cameraController.modalPresentationStyle = .fullScreen
 
             if #available(iOS 13.0, *) {
+                cameraController.isModalInPresentation = true
                 cameraController.overrideUserInterfaceStyle = .dark
                 cameraController.view.backgroundColor = .black
             }
@@ -39,13 +39,10 @@ class HomeViewController: UIViewController, ImageScannerControllerDelegate {
             }
             
             present(cameraController, animated: true) {
-                self.cameraController.view.addSubview(self.selectPhotoButton)
-                NSLayoutConstraint.activate([
-                    self.selectPhotoButton.widthAnchor.constraint(equalToConstant: 44.0),
-                    self.selectPhotoButton.heightAnchor.constraint(equalToConstant: 44.0),
-                    self.selectPhotoButton.rightAnchor.constraint(equalTo: self.cameraController.view.safeAreaLayoutGuide.rightAnchor, constant: -24.0),
-                    self.cameraController.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: self.selectPhotoButton.bottomAnchor, constant: (65.0 / 2) - 10.0)
-                ])
+                if let window = UIApplication.shared.keyWindow {
+                    window.addSubview(self.selectPhotoButton)
+                    self.setupConstraints()
+                }
             }
         }
     }
@@ -75,20 +72,44 @@ class HomeViewController: UIViewController, ImageScannerControllerDelegate {
     }
     
     @objc func selectPhoto() {
-        cameraController?.dismiss(animated: true)
-        self.hideButtons()
-        let scanPhotoVC = ScanPhotoViewController()
-        scanPhotoVC._result = _result
-        scanPhotoVC.saveTo = self.saveTo
-        scanPhotoVC.modalPresentationStyle = .fullScreen
-        if #available(iOS 13.0, *) {
-            scanPhotoVC.overrideUserInterfaceStyle = .dark
+        if let window = UIApplication.shared.keyWindow {
+            window.rootViewController?.dismiss(animated: true, completion: nil)
+            self.hideButtons()
+            
+            let scanPhotoVC = ScanPhotoViewController()
+            scanPhotoVC._result = _result
+            scanPhotoVC.saveTo = self.saveTo
+            if #available(iOS 13.0, *) {
+                scanPhotoVC.isModalInPresentation = true
+                scanPhotoVC.overrideUserInterfaceStyle = .dark
+            }
+            window.rootViewController?.present(scanPhotoVC, animated: true)
         }
-        self.present(scanPhotoVC, animated: true)  
     }
     
     func hideButtons() {
         selectPhotoButton.isHidden = true
+    }
+    
+    private func setupConstraints() {
+        var selectPhotoButtonConstraints = [NSLayoutConstraint]()
+        
+        if #available(iOS 11.0, *) {
+            selectPhotoButtonConstraints = [
+                selectPhotoButton.widthAnchor.constraint(equalToConstant: 44.0),
+                selectPhotoButton.heightAnchor.constraint(equalToConstant: 44.0),
+                selectPhotoButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -24.0),
+                view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: selectPhotoButton.bottomAnchor, constant: (65.0 / 2) - 10.0)
+            ]
+        } else {
+            selectPhotoButtonConstraints = [
+                selectPhotoButton.widthAnchor.constraint(equalToConstant: 44.0),
+                selectPhotoButton.heightAnchor.constraint(equalToConstant: 44.0),
+                selectPhotoButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -24.0),
+                view.bottomAnchor.constraint(equalTo: selectPhotoButton.bottomAnchor, constant: (65.0 / 2) - 10.0)
+            ]
+        }
+        NSLayoutConstraint.activate(selectPhotoButtonConstraints)
     }
     
     func setParams(saveTo: String, canUseGallery: Bool) {

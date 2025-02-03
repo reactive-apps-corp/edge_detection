@@ -22,7 +22,6 @@ public class SwiftEdgeDetectionPlugin: NSObject, FlutterPlugin, UIApplicationDel
                 let destinationViewController = HomeViewController()
                 destinationViewController.setParams(saveTo: saveTo, canUseGallery: canUseGallery)
                 destinationViewController._result = result
-                destinationViewController.modalPresentationStyle = .fullScreen
                 viewController.present(destinationViewController,animated: true,completion: nil);
             }
         }
