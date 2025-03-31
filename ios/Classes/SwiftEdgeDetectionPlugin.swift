@@ -11,21 +11,21 @@ public class SwiftEdgeDetectionPlugin: NSObject, FlutterPlugin, UIApplicationDel
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let args = call.arguments as? [String: Any],
-              let saveTo = args["save_to"] as? String
-        else {
+        guard let args = call.arguments as? [String: Any] else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing parameters", details: nil))
             return
         }
         
         let canUseGallery = args["can_use_gallery"] as? Bool ?? false
+        let multipleScan = args["multiple_scan"] as? Bool ?? false
+        
         guard let viewController = UIApplication.shared.delegate?.window??.rootViewController
         else {
             result(FlutterError(code: "NO_VIEW_CONTROLLER", message: "Could not find root view controller", details: nil))
             return
         }
         
-        let destinationVC = HomeViewController(saveTo: saveTo, canUseGallery: canUseGallery, result: result)
+        let destinationVC = HomeViewController(canUseGallery: canUseGallery, multipleScan: multipleScan, result: result)
         destinationVC.modalPresentationStyle = .fullScreen
         
         DispatchQueue.main.async {
