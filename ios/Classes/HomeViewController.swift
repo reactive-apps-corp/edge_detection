@@ -95,10 +95,17 @@ final class HomeViewController: UIViewController {
         selectPhotoButton.isHidden = true
     }
 
+    private func showSelectButtonIfNeeded() {
+        if canUseGallery {
+            selectPhotoButton.isHidden = false
+        }
+    }
+
     private func askForAnotherScan(scanner: ImageScannerController) {
         let alert = UIAlertController(title: "Scan another receipt?", message: nil, preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+            self.showSelectButtonIfNeeded()
             scanner.resetScanner()
         })
 
@@ -139,8 +146,16 @@ extension HomeViewController: ImageScannerControllerDelegate {
 
     func imageScannerControllerDidCancel(_ scanner: ImageScannerController) {
         hideSelectButton()
-        _result?(false)
+        _result?(self.scannedImages)
         dismiss(animated: true)
+    }
+    
+    func imageScannerControllerMoveEdit(_ scanner: ImageScannerController) {
+        hideSelectButton()
+    }
+    
+    func imageScannerControllerViewWillAppear(_ scanner: ImageScannerController) {
+        showSelectButtonIfNeeded()
     }
 }
 
