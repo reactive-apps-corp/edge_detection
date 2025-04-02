@@ -95,6 +95,8 @@ public final class ScannerViewController: UIViewController {
         UIApplication.shared.isIdleTimerDisabled = true
 
         navigationController?.navigationBar.barStyle = .blackTranslucent
+        
+        viewWillAppearImageScannerController()
     }
 
     override public func viewDidLayoutSubviews() {
@@ -264,6 +266,11 @@ public final class ScannerViewController: UIViewController {
             flashButton.tintColor = UIColor.lightGray
         }
     }
+    
+    private func viewWillAppearImageScannerController() {
+        guard let imageScannerController = navigationController as? ImageScannerController else { return }
+        imageScannerController.imageScannerDelegate?.imageScannerControllerViewWillAppear(imageScannerController)
+    }
 
     @objc private func cancelImageScannerController() {
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
@@ -290,7 +297,10 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
 
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didCapturePicture picture: UIImage, withQuad quad: Quadrilateral?) {
         activityIndicator.stopAnimating()
-
+        
+        guard let imageScannerController = navigationController as? ImageScannerController else { return }
+        imageScannerController.imageScannerDelegate?.imageScannerControllerMoveEdit(imageScannerController)
+        
         let editVC = EditScanViewController(image: picture, quad: quad)
         navigationController?.pushViewController(editVC, animated: false)
 

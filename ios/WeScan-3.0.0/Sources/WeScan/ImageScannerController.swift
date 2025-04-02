@@ -19,6 +19,20 @@ public protocol ImageScannerControllerDelegate: NSObjectProtocol {
     ///   - results: The results of the user scanning with the camera.
     /// - Discussion: Your delegate's implementation of this method should dismiss the image scanner controller.
     func imageScannerController(_ scanner: ImageScannerController, didFinishScanningWithResults results: ImageScannerResults)
+    
+    /// Tells the delegate that the scan screen has opened
+    ///
+    /// - Parameters:
+    ///   - scanner: The scanner controller object managing the scanning interface.
+    /// - Discussion: Your delegate's implementation of this method should hide gallery button
+    func imageScannerControllerViewWillAppear(_ scanner: ImageScannerController)
+    
+    /// Tells the delegate that the user is proceeding to edit
+    ///
+    /// - Parameters:
+    ///   - scanner: The scanner controller object managing the scanning interface.
+    /// - Discussion: Your delegate's implementation of this method should hide gallery button
+    func imageScannerControllerMoveEdit(_ scanner: ImageScannerController)
 
     /// Tells the delegate that the user cancelled the scan operation.
     ///
