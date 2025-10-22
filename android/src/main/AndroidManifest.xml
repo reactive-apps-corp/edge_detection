@@ -13,7 +13,8 @@
         android:allowBackup="false"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:extractNativeLibs="true">
         <activity
             android:name=".scan.ScanActivity"
             android:launchMode="singleTask"
