@@ -38,7 +38,7 @@ class ScanActivity : BaseActivity(), IScanView.Proxy {
     }
 
     override fun prepare() {
-        if (!OpenCVLoader.initLocal()) {
+        if (!OpenCVLoader.initDebug()) {
             Log.i(TAG, "loading opencv error, exit")
             finish()
         }
